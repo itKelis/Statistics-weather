@@ -83,6 +83,8 @@ class multi():
                         month = np.array([b[j] for j in select])
                     elif isinstance(select,dict):
                         month = np.array([b[j] for j in select[sheet_name[i]]])
+                    else:
+                        pass
                     a[i] = np.mean(np.transpose(month),axis=1)
                     
         if dimension == None:
