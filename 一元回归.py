@@ -20,7 +20,7 @@ class simple_regression():
         #读取数据
         # datas = pd.DataFrame(pd.read_csv("一元回归.csv"),columns=["year","3","4","5"])
 
-        datas = pd.read_excel("one.xlsx")
+        datas = pd.read_excel("./data/train1.xlsx")
         self.y = self.dataprocess(datas,["sheet"],60,[10,8,9],dimension=True)
         self.x = np.array(range(1950,2010))
         # print(procceed)
@@ -63,6 +63,7 @@ class simple_regression():
 
         plt.scatter(self.x,self.y)          #y估计
         plt.plot(x,y)                       #原始数据散点图
+        print("开始plot")
         plt.show()
 
     def dataprocess(self,data,sheet_name,size,select,dimension = None):
