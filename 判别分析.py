@@ -6,10 +6,11 @@ class discrimination():
         sheet_name = ["1","2"]
         select = {"1" : [0,1,2,3],"2":[0,1,2,3]}
         size = 20
-        data = pd.read_excel("./data/train3.xlsx",sheet_name=sheet_name)
-        procceed = self.dataprocess(data,sheet_name,size,select)
-        print(procceed.shape)
-        self.x = np.array(procceed)
+        data = pd.read_excel("./data/train3.xlsx",sheet_name=["1","2"])
+        # print()
+        # procceed = self.dataprocess(data,sheet_name,size,select,dimension = 1)
+        # print(procceed.shape)
+        self.x = np.array([np.array(data["1"])[0:19,1:],np.array(data["2"])[0:19,1:]])
         self.y = None
         pass
     
@@ -17,21 +18,23 @@ class discrimination():
         #[[第一类],[第二类]]
         #类里面[[第一因子],[第二因子],[第三因子]]
         # print(self.x[0].shape)
-        Ws = np.zeros((self.x[0].shape[1],self.x[0][19].shape[0]))
+        x = np.array([self.x[0].T,self.x[1].T])
+        print(x[0].shape)
+        h = x[0].shape[0]
+        l = x[0].shape[1]
+        Ws = np.zeros((h,h))
+
+        for i in range(h):
+            for j in range(h):
+                Ws[i][j] = (np.sum(np.array([k - np.mean(x[0][i]) for k in x[0][i]]) * np.array([k - np.mean(x[0][j]) for k in x[0][j]]))
+                + np.sum(np.array([k - np.mean(x[1][i]) for k in x[1][i]]) * np.array([k - np.mean(x[1][j]) for k in x[1][j]])))
         # print(Ws)
-        self.x[0] = self.x[0].T
-        self.x[1] = self.x[1].T
-        print(self.x)
-        # print(np.sum(np.array([l - np.mean(self.x[0][0],axis=0) for l in self.x[0]])))
+        
+        self.d = np.zeros(h)
+        for i in range(h):
+            self.d[i] = np.mean(x[0][i] - x[1][i])
 
-        for j in range(self.x[0].shape[0]):
-            for k in range(self.x[0].shape[1]):
-                # print("j:{},K:{}".format(j,self.x[0].shape[1]))
-                Ws[j][k] = (np.sum(np.array([l - np.mean(self.x[0][j],axis=0) for l in self.x[1]]) *np.array([l - np.mean(self.x[0][k],axis=0) for l in self.x[1]]))
-                + np.sum(np.array([l - np.mean(self.x[1][j],axis=0) for l in self.x[1]]) *np.array([l - np.mean(self.x[1][k],axis=0) for l in self.x[1]])))
-
-        self.d = np.zeros((1,self.x[0].shape[1]))
-        # print(self.d)
+        self.W = np.linalg.solve(Ws,d)
         self.yc = (np.size(self.x[0])*np.mean(self.y)
             )
         
