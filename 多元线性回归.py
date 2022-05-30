@@ -37,6 +37,8 @@ class multi():
         
         self.l = l
         self.ly = ly
+        print(l)
+        print(ly)
         self.b = np.linalg.solve(l, ly)     
         self.b0 = np.mean(self.y) - (np.mean(self.datas[0])*self.b[0]) 
         - (np.mean(self.datas[1])*self.b[1]) 
@@ -112,7 +114,7 @@ sheet_name = ["Arctic Oscillation","North Atlantic Oscillation","NINO","North Pa
 months = {"Arctic Oscillation":[11,0,1],"North Atlantic Oscillation":[11,0,1],"NINO":[5,6,7],"North Pacific index":[2,3,4],"Western Pacific index":[5,6,7]}
 # months = [1,4,5]
 
-multis = multi("train2.xlsx",sheet_name,1979,39,select = months)
+multis = multi("./data/train2.xlsx",sheet_name,1979,39,select = months)
 multis.sloveRegression()
 multis.checkRegression()
 multis.printResult()
