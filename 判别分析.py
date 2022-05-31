@@ -11,7 +11,7 @@ class discrimination():
         # procceed = self.dataprocess(data,sheet_name,size,select,dimension = 1)
         # print(procceed.shape)
         self.x = np.array([np.array(data["1"])[0:19,1:],np.array(data["2"])[0:19,1:]])
-        self.y = None
+        # self.y = np.array([[],[],[],[]])
         pass
     
     def countX(self):
@@ -28,16 +28,16 @@ class discrimination():
             for j in range(h):
                 Ws[i][j] = (np.sum(np.array([k - np.mean(x[0][i]) for k in x[0][i]]) * np.array([k - np.mean(x[0][j]) for k in x[0][j]]))
                 + np.sum(np.array([k - np.mean(x[1][i]) for k in x[1][i]]) * np.array([k - np.mean(x[1][j]) for k in x[1][j]])))
-        # print(Ws)
-        
+
         self.d = np.zeros(h)
         for i in range(h):
             self.d[i] = np.mean(x[0][i] - x[1][i])
 
-        self.W = np.linalg.solve(Ws,d)
-        self.yc = (np.size(self.x[0])*np.mean(self.y)
-            )
-        
+        self.W = np.linalg.solve(Ws,self.d)
+        yc = eval("lambda x : x[0] * self.W[0] + x[1] * self.W[1] + x[2] * self.W[2] + x[3] * self.W[3]")   
+        self.y1 = yc(np.mean(x[0], axis= 0))
+        self.y2 = yc(np.mean(x[1], axis= 0))
+        print(self.y2)     
         pass
 
     def dataprocess(self,data,sheet_name,size,select, dimension = None):
