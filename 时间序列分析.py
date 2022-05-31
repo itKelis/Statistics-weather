@@ -26,20 +26,14 @@ class timeanaliize():
                     if (j + t) < n:
                         xts += ((self.y[j] - np.mean(self.y)) * (self.y[j+t] - np.mean(self.y)))/Xd[0]
             Xd[t] = xts /(n-t)
-        self.rou = Xd
+        self.rou = Xd[1:]
         print("rou是{}".format(self.rou))
         max = self.FindList3MaxNum()
         self.result = np.zeros(len(max))
+        #打印
         for i in range(len(max)):
             self.result[i] = np.where(self.rou == max[i])[0]
 
-        # print(result)
-        #6 11 4 3 7
-        # 0     
-        #
-        #
-        #
-        #
     def slove(self):
         so = np.zeros((len(self.result),len(self.result)))
         self.d = np.zeros((len(self.result),len(self.result)))
@@ -48,10 +42,7 @@ class timeanaliize():
                 so[i][j] = self.rou[i-j]
                 self.d[i][j] = i-j
         f = np.array([self.rou[int(i)] for i in self.result])
-        # print(f)
-        # print(so)
         self.fi = np.linalg.solve(np.array(so), f)
-        
         print("fi是{}".format(self.fi))
         self.Xdc =eval("lambda x : x[0]*{}+x[1]*{}+x[2]*{}+x[3]*{}".format(self.fi[0],self.fi[1],self.fi[2],self.fi[3])) #
         
@@ -62,9 +53,7 @@ class timeanaliize():
         print(len(x))
         for i in range(size,len(x)):
             print(i)
-            if i -11 >0:
-                xguji[i] = self.Xdc(np.array([x[i-6]-np.mean(x),x[i-11]-np.mean(x),x[i-4]-np.mean(x),x[i-3]-np.mean(x),x[i-7]-np.mean(x)]))
-                # print(xguji[i])
+            xguji[i] = self.Xdc(np.array([x[i-6]-np.mean(x[:i+1]),x[i-11]-np.mean(x[:i+1]),x[i-4]-np.mean(x[:i+1]),x[i-3]-np.mean(x[:i+1]),x[i-7]-np.mean(x[:i+1])]))
         # print(xguji)
 
         print(xguji)
