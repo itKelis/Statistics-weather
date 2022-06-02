@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 class timeanaliize():
     def __init__(self, size):
@@ -27,8 +28,8 @@ class timeanaliize():
                         xts += ((self.y[j] - np.mean(self.y)) * (self.y[j+t] - np.mean(self.y)))/Xd[0]
             Xd[t] = xts /(n-t)
         self.rou = Xd[1:]
-        print("rou是{}".format(self.rou))
-        max = self.FindList3MaxNum()
+        print("rou是{}".format(len(self.rou)))
+        max = self.FindList3MaxNum(5)
         self.result = np.zeros(len(max))
         #打印
         for i in range(len(max)):
@@ -37,10 +38,12 @@ class timeanaliize():
     def slove(self):
         so = np.zeros((len(self.result),len(self.result)))
         self.d = np.zeros((len(self.result),len(self.result)))
+
         for i in range(len(self.result)):
             for j in range(len(self.result)):
                 so[i][j] = self.rou[i-j]
                 self.d[i][j] = i-j
+                
         f = np.array([self.rou[int(i)] for i in self.result])
         self.fi = np.linalg.solve(np.array(so), f)
         print("fi是{}".format(self.fi))
@@ -49,38 +52,44 @@ class timeanaliize():
     def check(self):
         x = self.data.to_numpy()[:,1][:]
         xguji = np.zeros(len(x))
-        print(range(size,len(x)))
+        print(range(self.size,len(x)))
         print(len(x))
-        for i in range(size,len(x)):
+        for i in range(self.size,len(x)):
             print(i)
             xguji[i] = self.Xdc(np.array([x[i-6]-np.mean(x[:i+1]),x[i-11]-np.mean(x[:i+1]),x[i-4]-np.mean(x[:i+1]),x[i-3]-np.mean(x[:i+1]),x[i-7]-np.mean(x[:i+1])]))
-        # print(xguji)
-
         print(xguji)
 
-    
-    def FindList3MaxNum(self):  # 快速获取list中最大的五个元素
-        max1, max2, max3, max4, max5 = None, None, None, None,None
-        for num in self.rou[1:]:
-            if max1 is None or max1 < num:
-                max1, num = num, max1
-            if num is None:
-                continue
-            if max2 is None or num > max2:
-                max2, num = num, max2
-            if num is None:
-                continue
-            if max3 is None or num > max3:
-                max3, num = num, max3
-            if num is None:
-                continue
-            if max4 is None or num > max4:
-                max4, num = num, max4
-            if num is None:
-                continue
-            if max5 is None or num > max5:
-                max5, num = num, max5    
-        return max1, max2, max3, max4, max5
+    def plot():
+        
+        pass
+    def FindList3MaxNum(self,size):  # 快速获取list中最大的五个元素
+        # max1, max2, max3, max4, max5 = None, None, None, None,None
+        max = np.zeros(size)
+        for num in self.rou:
+            for i in range(len(max)):
+                if abs(num) > max[i]:
+                    max[i], num = num, max[i]
+
+        return max
+            # if max1 is None or max1 < num:
+            #     max1, num = num, max1
+            # if num is None:
+            #     continue
+            # if max2 is None or num > max2:
+            #     max2, num = num, max2
+            # if num is None:
+            #     continue
+            # if max3 is None or num > max3:
+            #     max3, num = num, max3
+            # if num is None:
+            #     continue
+            # if max4 is None or num > max4:
+            #     max4, num = num, max4
+            # if num is None:
+            #     continue
+            # if max5 is None or num > max5:
+            #     max5, num = num, max5    
+        
 
 size = 25
 a = timeanaliize(size)
