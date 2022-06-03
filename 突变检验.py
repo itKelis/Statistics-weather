@@ -117,13 +117,13 @@ class DataProcess:
         plt.legend(handles=[l1,l3],labels=['Marked=0.01','T'],loc='upper right')    #放置图例
         plt.xlabel("YEAR ")
         plt.ylabel("T")
-        plt.savefig("./{}+step={}.jpg".format(self.sta,step))
+        plt.savefig("./temp/{}+step={}.jpg".format(self.sta,step))
         # plt.show()
 
     #函数名：getYearsum
     #注释：从NOAA网站获取相应气象台站的每年数据总结，sta为台站代号,可以根据需要下载不同数据集
     def getYearsum(self): 
-        if os.path.exists(self.sta+self.type+".csv"):
+        if os.path.exists("./temp/"+self.sta+self.type+".csv"):
             print("检测到当前台站数据已存在，数据处理中")
             return True
         if (self.type == "day"):
@@ -134,7 +134,7 @@ class DataProcess:
             url = "https://www.ncei.noaa.gov/data/global-summary-of-the-year/access/"+self.sta+".csv"
         res = requests.get(url)
         if res.status_code == requests.codes.ok:
-            with open("{}{}.csv".format(self.sta,self.type),"wb") as f:
+            with open("./temp/{}{}.csv".format(self.sta,self.type),"wb") as f:
                 f.write(res.content)
             print("台站数据下载成功，正在进行数据处理")
             return True
@@ -145,7 +145,7 @@ class DataProcess:
     #函数名：ReadData
     #注释：处理下载好的csv数据，读取相应年份和所需数据
     def ReadData(self):
-        csv_dat = pd.read_csv("{}{}.csv".format(self.sta,self.type))
+        csv_dat = pd.read_csv("./temp/{}{}.csv".format(self.sta,self.type))
         data = csv_dat.dropna(subset=self.columns)                  #去除空数据所在的行
         year = np.array(pd.DataFrame(data,columns=["DATE"]))    #获取年份和平均温度
         temp = np.array(pd.DataFrame(data,columns=self.columns))
