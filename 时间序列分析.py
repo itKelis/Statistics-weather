@@ -54,6 +54,7 @@ class timeanaliize():
         xguji = np.zeros(len(x))
         print(range(self.size,len(x)))
         print(len(x))
+        self.xguji = xguji
         for i in range(self.size,len(x)):
             print(i)
             xguji[i] = self.Xdc(np.array([x[i-6]-np.mean(x[:i+1]),x[i-11]-np.mean(x[:i+1]),x[i-4]-np.mean(x[:i+1]),x[i-3]-np.mean(x[:i+1]),x[i-7]-np.mean(x[:i+1])]))

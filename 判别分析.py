@@ -1,8 +1,9 @@
+from optparse import check_builtin
 import numpy as np
 import pandas as pd
 
 class discrimination():
-    def __init__(self) -> None:
+    def __init__(self,checks) -> None:
         sheet_name = ["1","2"]
         select = {"1" : [0,1,2,3],"2":[0,1,2,3]}
         size = 20
@@ -10,7 +11,9 @@ class discrimination():
         # print()
         # procceed = self.dataprocess(data,sheet_name,size,select,dimension = 1)
         # print(procceed.shape)
-        self.x = np.array([np.array(data["1"])[0:19,1:],np.array(data["2"])[0:19,1:]])
+        self.x = np.array([np.array(data["1"])[:19,1:],np.array(data["2"])[:19,1:]])
+        print(checks)
+        self.checkdata = checks
         # self.y = np.array([[],[],[],[]])
         pass
     
@@ -34,19 +37,45 @@ class discrimination():
             self.d[i] = np.mean(x[0][i] - x[1][i])
 
         self.W = np.linalg.solve(Ws,self.d)
-        yc = eval("lambda x : x[0] * self.W[0] + x[1] * self.W[1] + x[2] * self.W[2] + x[3] * self.W[3]")   
-        self.y1 = yc(np.mean(x[0], axis= 0))
-        self.y2 = yc(np.mean(x[1], axis= 0))
-        print(self.y2)     
+        self.yce = eval("lambda x : x[0] * {} + x[1] * {} + x[2] * {} + x[3] * {}".format(self.W[0],self.W[1],self.W[2],self.W[3]))  
+        print(np.mean(x[0], axis= 1)) 
+        self.y1 = self.yce(np.mean(x[0], axis= 1))
+        self.y2 = self.yce(np.mean(x[1], axis= 1)) 
+        self.yc =  (((self.x[0].size * self.y1) +(self.x[1].size * self.y2))/
+                (int(self.x[0].size) + int(self.x[1].size)))
         pass
 
-    def dataprocess(self,data,sheet_name,size,select, dimension = None):
+    def check(self):
+        # print()
+        nums = np.zeros(len(self.checkdata))
+        for i in range(len(self.checkdata)):
+            nums[i] = self.yce(self.checkdata[i])
+        self.checks = nums
+        # print(self.x[0].shape[0])
+        
+        y1str = "属于海雾"
+        y2str = "属于轻雾"
+        for j in range(len(self.checks)):
+            if self.y1 > self.y2:
+                if self.checks[j] > self.yc:
+                    print("第{}个{}".format(j,y1str,self.checkdata))
+                else:
+                    print("第{}个{}".format(j,y2str))                
+
+    def inspect(self):
+        # ck = np.mean(self.x[0],axis=0) - np.mean(self.x[0],axis=0)
+        # print(self.W)
+        self.D = ((self.x.size-2) * np.sum(self.W*self.d))
+        self.F = (((self.x[1].size*self.x[0].size)/self.x.size) * ((self.x.size-self.W.size-1)/((self.x.size-2) * self.W.size)) * self.D)
+        print("D是{}\nF是{}".format(self.D,self.F))
+
+    def dataprocess(self,data,sheet_name    ,size,select, dimension = None):
         a = []      
         #a用来保存处理前的数据
         
         if dimension == None:
             #读取每个表所需年份的所有数据
-            #手动输入数据维度，一元则直接读取数据，多元则循环读取数据
+            #手动输入数据维度， 一元则直接读取数据，多元则循环读取数据
             for i in range(len(sheet_name)):
                 datas = np.array(data[sheet_name[i]])[:size+1,1:13]     
                 print("dimension")
@@ -78,6 +107,9 @@ class discrimination():
             return np.array(a,dtype='object')
         else:
             return np.array(a,dtype='object').flatten()
-
-a = discrimination()
+            
+checks = [[300,85,0.34,3.4],[283,88,-0.18,4.1],[200,78,1.2,4.32],[268,94,2.31,2.0],[180,96,1.5,3.62]]   #检验的数据
+a = discrimination(checks)
 a.countX()
+a.check()
+a.inspect()
